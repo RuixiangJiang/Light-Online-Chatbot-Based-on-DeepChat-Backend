@@ -10,6 +10,7 @@ import multer from 'multer';
 import cors from 'cors';
 import usersRouter from './user/user_register'
 import historyRouter from './user/history_router'
+import githubRegister from './user/github_auth'
 
 // ------------------ SETUP ------------------
 
@@ -27,6 +28,7 @@ app.use(cors());
 app.use(express.json());
 app.use(usersRouter)
 app.use(historyRouter)
+app.use(githubRegister)
 
 // ------------------ CUSTOM API ------------------
 
