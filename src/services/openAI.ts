@@ -3,6 +3,7 @@ import FormData from 'form-data';
 import https from 'https';
 
 import { appendInteraction } from '../user/history_store'
+import { hasSessionId } from '../user/session_store';
 
 // Make sure to set the OPENAI_API_KEY environment variable in a .env file (create if does not exist) - see .env.example
 
@@ -28,6 +29,14 @@ export class OpenAI {
     const lastUserText = Array.isArray(body?.messages)
       ? [...body.messages].reverse().find((m: any) => m?.role === 'user')?.text || ''
       : '';
+    try {
+      const ok = sessionId && (await hasSessionId(sessionId));
+      if (!ok) {
+        return res.status(403).json({ error: 'invalid_session', message: 'Unknown or missing sessionId' });
+      }
+    } catch (e) {
+      return next(e);
+    }
     const req = https.request('https://api.openai.com/v1/chat/completions',
       {
         method: 'POST',
@@ -49,7 +58,6 @@ export class OpenAI {
             // https://deepchat.dev/docs/connect/#Response
             // res.json({text: result.choices[0].message.content});
             const aiText = result.choices?.[0]?.message?.content ?? '';
-            // ✅ 记录历史（有 sessionId 时）
             if (sessionId) {
               try { await appendInteraction(sessionId, lastUserText, aiText); } catch {}
             }
@@ -103,12 +111,11 @@ export class OpenAI {
                 full += delta;
                 res.write(`data: ${JSON.stringify({ text: delta })}\n\n`);
               }
-            } catch {/* 忽略不完整 JSON */}
+            } catch {}
           }
         } catch (error) { return next(error); }
       });
       streamResp.on('end', async () => {
-        // ✅ 记录历史
         if (sessionId && (lastUserText || full)) {
           try { await appendInteraction(sessionId, lastUserText, full); } catch {}
         }

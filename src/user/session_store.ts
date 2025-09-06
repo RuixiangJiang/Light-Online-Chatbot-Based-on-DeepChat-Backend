@@ -44,3 +44,8 @@ export async function getSession(userId: string) {
   await ensureLoaded();
   return cache![userId.trim()] ?? null;
 }
+
+export async function hasSessionId(sessionId: string) {
+  await ensureLoaded();
+  return Object.values(cache!).includes(sessionId);
+}
