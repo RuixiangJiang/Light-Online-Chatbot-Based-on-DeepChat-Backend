@@ -11,7 +11,7 @@ router.get('/history', async (req: Request, res: Response) => {
   const sessionId = String(req.query.sessionId || '').trim();
   if (!sessionId) return res.status(400).json({ error: 'sessionId is required' });
 
-  // 你也可以在这里校验 req.headers['x-user-id'] 与 sessionId 的绑定关系
+  // here you can add a check: is req.headers['x-user-id'] mapped with sessionId?
   const messages = await getHistory(sessionId);
   return res.json({ messages });
 });
