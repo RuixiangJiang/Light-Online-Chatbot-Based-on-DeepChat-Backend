@@ -31,3 +31,14 @@ If you want to use the proxies, please create an `.env` file and define the corr
 ### :wrench: Improvements
 
 If you are experiencing issues with this project or have suggestions on how to improve it, do not hesitate to create a new ticket in [Github issues](https://github.com/OvidijusParsiunas/deep-chat/issues) and we will look into it as soon as possible.
+
+
+```
+curl "https://chat.ruixiangj.top/api/history?sessionId=sess_Q" \
+   -X GET \
+   -H "Content-Type: application/json" \
+   -H "X-User-Id: 2037358823@qq.com" \
+   -H "X-Session-Id: sess_" \
+   -H "Origin: https://chat.ruixiangj.top" \
+   -H "Referer: https://chat.ruixiangj.top/chat"
+   ```
